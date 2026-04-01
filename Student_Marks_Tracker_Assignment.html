@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Marks Tracker</title>
+
+
+    <style>
+
+        *{
+            margin: 0 auto;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #fae9f1;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+        header {
+            background: #3e0127;
+            color: white;
+            text-align: center;
+            padding: 18px;
+        }
+        form {
+            background: white;
+            padding: 20px;
+            border-radius: 7px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            margin: 20px;
+            align-items: center;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid rgb(129, 9, 77);
+            border-radius: 4px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 2px rgba(151, 3, 99, 0.08);
+        }
+        table {
+            width: 90%;
+            background: white;
+            border-collapse: collapse;
+        }
+        th {
+            background: #2b001a;
+            color: white;
+            padding: 11px;
+        }
+        tr:hover td{
+            background: #dbdbdb;
+        }
+        .A {
+            color: #27ae60;
+            font-weight: bold;
+        }
+        .B {
+            color: #2980b9;
+            font-weight: bold;
+        }
+        .C {
+            color: #f39c12;
+            font-weight: bold;
+        }
+        .D {
+            color: rgb(255, 106, 0);
+            font-weight: bold;
+        }
+        .F {
+            color: rgb(183, 0, 0);
+            font-weight: bold;
+        }
+        #box {
+            display: flex;
+            flex-direction: row;
+        }
+        button {
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            color: white;
+            padding: 10px;
+        }
+        button:hover {
+            opacity: 0.85;
+        }
+        #add, #clear, #showAll {
+            background-color: #3498db;
+        }
+        #desc, #asc {
+            background: #27ae60;
+        }
+        #fail {
+            background: #c2053b;
+        }
+        span {
+            color: #c2053b;
+            font-size: 12px;
+            display: block;
+            margin-bottom: 10px;
+        }
+        #statistics_bar {
+            background: #740048;
+            color: white;
+            border-radius: 6px;
+            padding: 10px 14px;
+            font-size: 13px;
+        }
+        td {
+            text-align: center;
+        }
+    </style>
+
+
+</head>
+
+
+<body>
+    
+    <header>
+        <h1>STUDENT MARKS TRACKER</h1>
+    </header>
+
+    <form>
+        <input type="text" id="iName" placeholder="Name: (Ex:Diksha Misra)">
+        <span id="errName"></span>
+        <input type="text" id="iRoll" placeholder="Roll number: (Ex: CS001)">
+        <span id="errRoll"></span>
+        <input type="text" id="iScore" placeholder="Score: (Ex: 100)">
+        <span id="errScore"></span>
+    </form>
+
+    <div id="box">
+        <button id="add">Add Student</button>
+        <button id="desc">Sort &uarr;</button>
+        <button id="asc">Sort &darr;</button>
+        <button id="fail">Fail Only</button>
+        <button id="showAll">Show All</button>
+        <button id="clear">Clear All</button>
+    </div>
+
+    <p style="margin: 25px;" id="statistics_bar">Table Empty</p>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Roll No</th>
+                <th>Name</th>
+                <th>Score</th>
+                <th>Grade</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+    </table>
+
+    <script>
+
+        let students = [];
+
+        function getGrade(score) {
+            if(score>=90) return "A";
+            if(score>=80) return "B";
+            if(score>=70) return "C";
+            if(score>=60) return "D";
+            return "F";
+        }
+
+        document.getElementById("iScore").addEventListener("input", function() {
+            let spanning = document.getElementById("errScore");
+            let score=Number(this.value);
+            if(score<60&&score>=0) {
+                spanning.textContent="Fail";
+                spanning.style.color = "red";
+            }
+            else if(score>=60&&score<=100) {
+                spanning.textContent="Pass";
+                spanning.style.color = "green";
+            }
+        });
+
+        document.getElementById("add").addEventListener("click", function() {
+
+            let name=document.getElementById("iName").value.trim();
+            let roll=document.getElementById("iRoll").value.trim();
+            let score=document.getElementById("iScore").value.trim();
+
+            let name_err = document.getElementById("errName");
+            let roll_err = document.getElementById("errRoll");
+            let score_err = document.getElementById("errScore");
+
+            name_err.textContent="";
+            roll_err.textContent="";
+            score_err.textContent="";
+
+            let isValid = true;
+
+            if(name===""||name.length<2) {
+                name_err.textContent="Name must be atleast 2 characters.";
+                isValid=false;
+            }
+            if(students.findIndex(s=>s.roll===roll)!==-1) {
+                roll_err.textContent="Roll number already exists."
+                isValid=false;
+            }
+            if(roll==="") {
+                roll_err.textContent="Please enter a valid roll number."
+                isValid=false;
+            }
+            if(score===""||isNaN(score)||score<0||score>100) {
+                score_err.textContent="Please enter a valid score."
+                isValid=false;
+            }
+            
+            if(isValid) {
+                document.getElementById("iName").value="";
+                document.getElementById("iRoll").value="";
+                document.getElementById("iScore").value="";
+                students.push({
+                    name: name,
+                    roll: roll,
+                    score: Number(score)
+                });
+                render();
+                let success_message=document.getElementById("errName");
+                success_message.textContent="Student added successfully!";
+                success_message.style.color = "green";
+                setTimeout(()=> {
+                    success_message.textContent="";
+                },2000);
+            }
+        });
+
+        function deleteStudent(index) {
+            if(index!==-1) students.splice(index,1);
+            render();
+        }
+
+        document.getElementById("desc").addEventListener("click", function() {
+            students.sort((a,b)=>b.score-a.score);
+            render();
+        });
+        document.getElementById("asc").addEventListener("click", function() {
+            students.sort((a,b)=>a.score-b.score);
+            render();
+        });
+
+        document.getElementById("fail").addEventListener("click", function() {
+            let filtered=students.filter(s=>s.score<60);
+            render(filtered);
+        });
+        document.getElementById("showAll").addEventListener("click", function() {
+            render(students);
+        });
+        document.getElementById("clear").addEventListener("click", function() {
+            if(confirm("Are you sure you want to clear the table? All your work will be lost!")) {
+                students = [];
+                render();
+            }
+        })
+
+        function render(data=students) {
+            let table = document.getElementById("tbody");
+            if(students.length===0) {
+                table.innerHTML="";
+                return;
+            }
+            table.innerHTML=data.map((s,i)=> {
+                let g=getGrade(s.score);
+                let status = s.score>=60 ? "Pass" : "Fail";
+                let statColor = s.score>=60 ? "Green" : "Red";
+                return `
+                <tr>
+                    <td>${i+1}</td>
+                    <td>${s.roll}</td>
+                    <td>${s.name}</td>
+                    <td>${s.score}</td>
+                    <td class="${g}">${g}</td>
+                    <td style="color:${statColor}; font-weight: bold;">${status}</td>
+                    <td>
+                        <button class="delBtn" style="margin:2px; background:#c2053b; text-align:center;" onclick="deleteStudent('${i}')">Delete</button>
+                        </td>
+                </tr>
+                `;
+            }).join("");
+            let sum = students.reduce((acc,s)=> acc+s.score,0);
+            let high = students.reduce((acc,s)=> {
+                return acc>s.score ? acc : s.score
+            },0);
+            let low = students.reduce((acc,s)=> {
+                return acc<s.score ? acc : s.score
+            },99999);
+            let pass=students.filter(s=> s.score>=60);
+            let percent = ((pass.length*100)/students.length).toFixed(2);
+            document.getElementById("statistics_bar").innerHTML= `
+            Total: ${students.length} | Average: ${(sum/students.length).toFixed(2)} | Highest: ${high} | 
+            Lowest: ${low} | Passing % : ${percent}
+            `
+        }
+
+    </script>
+
+
+</body>
+</html>
