@@ -1,4 +1,4 @@
-# Student Mark Tracker
+# Student Marks Tracker
 A responsive web application to manage and track student scores and details.
 > Developed initially as part of a Web Programming lab assignment, with significant enhancements including UI redesign, improved user interactions, and additional features implemented independently.
 
@@ -55,3 +55,6 @@ By developing this project, I learned:
 - Improved understanding of **JavaScript logic structuring and modular functions**
 
 > This project was built as part of learning JavaScript. Most logic and implementation were written independently, with minimal debugging assistance.
+
+## 📸 Preview
+![Student Marks Tracker](3StudentMarksTracker.png)
